@@ -7,7 +7,6 @@ import kivy.utils
 from hexmap import HexMapCell
 
 
-
 class StrategyGame(FloatLayout):
     main_map = properties.ObjectProperty(None)
     map_rows = properties.NumericProperty(0)

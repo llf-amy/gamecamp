@@ -13,7 +13,6 @@ class HexMapCell(Label):
         ## as [x, y, z]
         self.cube_coords = self.even_r_to_cube(self.coords.row / 3, self.coords.col / 2)
 
-
     def even_r_to_cube(self, row, col):
         '''compute cube coordinates from even-r hex coordinates'''
         x = int(col - ceil(float(row)/2))
