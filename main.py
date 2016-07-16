@@ -27,7 +27,7 @@ class StrategyGame(FloatLayout):
             self.main_map.add_widget(hex_cell)
 
             # Add overlay conditionally.
-            if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0):
+            if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0) and (col > 0):
                 print('({}, {})'.format(row, col))
 
                 # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
@@ -49,7 +49,6 @@ class StrategyGame(FloatLayout):
                     Color(1, 1, 1, 1)
                     hex_cell.coord_label = Label(
                         text=hex_cell.coordinate_text(), center_x=hex_cell.x, center_y=hex_cell.y)
-
 
                 # Bind the cell code so as to update its position and size when the parent widget resizes.
                 hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
