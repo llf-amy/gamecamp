@@ -12,6 +12,8 @@ class HexMapCell(Label):
         ## set the cube coordinates of the hexagon
         ## as [x, y, z]
         self.cube_coords = self.even_r_to_cube(self.coords.row / 3, self.coords.col / 2)
+        self.selected = False
+        self.visible_on_map = False
 
     def even_r_to_cube(self, row, col):
         '''compute cube coordinates from even-r hex coordinates'''
@@ -63,3 +65,28 @@ class HexMapCell(Label):
         self.coord_label.center_x = self.x
         self.coord_label.center_y = self.y
 
+
+    def on_touch_down(self, touch):
+        if super(HexMapCell, self).on_touch_down(touch):
+            return False
+
+        if not self.visible_on_map:
+            return False
+
+        if not self.collide_point(touch.x, touch.y):
+            with self.canvas.after:
+                Color(*kivy.utils.get_color_from_hex('#A1A5AA'))
+                radius = 2 * self.height
+                self.ell = Line(circle=(self.x, self.y, radius, 0, 360, 6), width=2)
+            return False
+
+        with self.canvas.after:
+            if 'button' in touch.profile and touch.button == 'left':
+                Color(*kivy.utils.get_color_from_hex('#00FF00'))
+
+            if 'button' in touch.profile and touch.button == 'right':
+                # TODO Will refactor to have separate on_touch_up for selected target hex instead.
+                Color(*kivy.utils.get_color_from_hex('#FF0000'))
+            radius = 2 * self.height
+            self.ell = Line(circle=(self.x, self.y, radius, 0, 360, 6), width=2)
+        return True

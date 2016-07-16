@@ -26,7 +26,7 @@ class StrategyGame(FloatLayout):
 
             # Add overlay conditionally.
             if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0) and (col > 0):
-                print('({}, {})'.format(row, col))
+                hex_cell.visible_on_map = True
 
                 # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
                 radius = 2 * hex_cell.height
@@ -37,7 +37,7 @@ class StrategyGame(FloatLayout):
                 with hex_cell.canvas.after:
 
                     # Create the outline of hexagon, based off the centre of the hex.
-                    Color(1, 0, 1, 1)
+                    Color(*kivy.utils.get_color_from_hex('#A1A5AA'))
                     hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y, radius, 0, 360, 6), width=2)
 
                     # Create the solid background of the hexagon, from the bottom left coordinate of the hex.
@@ -52,6 +52,7 @@ class StrategyGame(FloatLayout):
 
                 # Bind the cell code so as to update its position and size when the parent widget resizes.
                 hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
+
 
 
 class StrategyGameApp(app.App):
