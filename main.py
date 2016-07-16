@@ -29,13 +29,20 @@ class StrategyGame(FloatLayout):
             # Add overlay conditionally.
             if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0):
                 print('({}, {})'.format(row, col))
+
+                # Determine size of the hexagon cell.
                 radius = 2 * hex_cell.height
                 solid_x = hex_cell.x - hex_cell.height*2
                 solid_y = hex_cell.y - hex_cell.height*2
                 solid_size = (4*hex_cell.height, 4*hex_cell.height)
+
                 with hex_cell.canvas.after:
+
+                    # Create the outline of hexagon.
                     Color(1, 0, 1, 1)
-                    hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y,radius, 0, 360, 6), width=2)
+                    hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y, radius, 0, 360, 6), width=2)
+
+                    # Create the solid background for the hexagon.
                     Color(*kivy.utils.get_random_color(alpha=.5))
                     hex_cell.solid = Ellipse(pos=(solid_x, solid_y), size=solid_size, segments=6)
                 hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
@@ -47,11 +54,17 @@ class HexMapCell(label.Label):
         self.coords = MapCoords(row, col)
 
     def update_pos(self, instance, value):
+
+        # Determine size of the hexagon cell.
         radius = 2 * self.height
         solid_x = self.x - self.height*2
         solid_y = self.y - self.height*2
         solid_size = (4*self.height, 4*self.height)
+
+        # Resize the outline of the cell.
         self.ell.circle = (self.x, self.y, radius, 0, 360, 6)
+
+        # Resize the actual cell.
         self.solid.pos = (solid_x, solid_y)
         self.solid.size = solid_size
 
