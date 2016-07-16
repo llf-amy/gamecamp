@@ -1,9 +1,14 @@
 import collections
 import random
+import math
 
 from kivy import app, properties
 from kivy.uix import button, label
 from kivy.uix.floatlayout import FloatLayout
+from kivy.graphics import Color, Ellipse, Line
+from kivy.logger import Logger
+import kivy.utils
+from kivy.vector import Vector
 
 MapCoords = collections.namedtuple('MapCoords', ['row', 'col'])
 
@@ -22,35 +27,23 @@ class StrategyGame(FloatLayout):
             col = region % self.map_cols
 
             # Add hex cells to make up the map.
-            hex_cell = self.pick_hex_cell(row=row, col=col)
+            hex_cell = HexMapCell()
             self.main_map.add_widget(hex_cell)
 
             # Add overlay conditionally.
-            if (row % 6 == 2 and col % 2 == 0) or (row % 6 == 5 and col % 2 == 1):
+            if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0):
                 print('({}, {})'.format(row, col))
-                self.add_widget(HexMapControlCell(hex_bind=hex_cell))
-
-    @staticmethod
-    def pick_hex_cell(row, col):
-        row_mod = row % 6
-        if col % 2 == 0:
-            if row_mod == 0:
-                return BU()
-            elif row_mod in (1, 2):
-                return L()
-            elif row_mod == 3:
-                return TD()
-            elif row_mod in (4, 5):
-                return R()
-        else:
-            if row_mod == 0:
-                return TD()
-            elif row_mod in (1, 2):
-                return R()
-            elif row_mod == 3:
-                return BU()
-            elif row_mod in (4, 5):
-                return L()
+                #radius = math.sqrt(hex_cell.width**2 + hex_cell.height**2)
+                radius = 2*hex_cell.height
+                solid_x = hex_cell.x - hex_cell.height*2
+                solid_y = hex_cell.y - hex_cell.height*2
+                solid_size = (4*hex_cell.height, 4*hex_cell.height)
+                with hex_cell.canvas.after:
+                    Color(1,0,1,1)
+                    hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y,radius, 0, 360, 6), width=2)
+                    Color(*kivy.utils.get_random_color(alpha = .5))
+                    hex_cell.solid = Ellipse(pos = (solid_x, solid_y), size = solid_size, segments = 6 )
+                hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
 
 
 class HexMapCell(label.Label):
@@ -58,22 +51,15 @@ class HexMapCell(label.Label):
         super(HexMapCell, self).__init__(**kwargs)
         self.coords = MapCoords(row, col)
 
-
-class BU(HexMapCell):
-    pass
-
-
-class TD(HexMapCell):
-    pass
-
-
-class L(HexMapCell):
-    pass
-
-
-class R(HexMapCell):
-    pass
-
+    def update_pos(self, instance, value):
+        #radius = math.sqrt(self.width**2 + self.height**2)
+        radius = 2*self.height
+        solid_x = self.x - self.height*2
+        solid_y = self.y - self.height*2
+        solid_size = (4*self.height, 4*self.height)
+        self.ell.circle = (self.x, self.y, radius, 0, 360, 6)
+        self.solid.pos  = (solid_x, solid_y)
+        self.solid.size = solid_size
 
 class HexMapControlCell(button.Button):
     def __init__(self, hex_bind=None, **kwargs):
