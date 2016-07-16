@@ -30,7 +30,7 @@ class StrategyGame(FloatLayout):
             if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0):
                 print('({}, {})'.format(row, col))
 
-                # Determine size of the hexagon cell.
+                # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
                 radius = 2 * hex_cell.height
                 solid_x = hex_cell.x - hex_cell.height*2
                 solid_y = hex_cell.y - hex_cell.height*2
@@ -38,13 +38,15 @@ class StrategyGame(FloatLayout):
 
                 with hex_cell.canvas.after:
 
-                    # Create the outline of hexagon.
+                    # Create the outline of hexagon, based off the centre of the hex.
                     Color(1, 0, 1, 1)
                     hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y, radius, 0, 360, 6), width=2)
 
-                    # Create the solid background for the hexagon.
+                    # Create the solid background of the hexagon, from the bottom left coordinate of the hex.
                     Color(*kivy.utils.get_random_color(alpha=.5))
                     hex_cell.solid = Ellipse(pos=(solid_x, solid_y), size=solid_size, segments=6)
+
+                # Bind the cell code so as to update its position and size when the parent widget resizes.
                 hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
 
 
@@ -54,8 +56,7 @@ class HexMapCell(label.Label):
         self.coords = MapCoords(row, col)
 
     def update_pos(self, instance, value):
-
-        # Determine size of the hexagon cell.
+        # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
         radius = 2 * self.height
         solid_x = self.x - self.height*2
         solid_y = self.y - self.height*2
