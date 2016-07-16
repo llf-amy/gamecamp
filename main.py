@@ -28,7 +28,8 @@ class StrategyGame(FloatLayout):
 
             # Add overlay conditionally.
             if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0) and (col > 0):
-                print('({}, {})'.format(row, col))
+
+                hex_cell.visible_on_map = True
 
                 # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
                 radius = 2 * hex_cell.height
@@ -39,7 +40,7 @@ class StrategyGame(FloatLayout):
                 with hex_cell.canvas.after:
 
                     # Create the outline of hexagon, based off the centre of the hex.
-                    Color(1, 0, 1, 1)
+                    Color(*kivy.utils.get_color_from_hex('#A1A5AA'))
                     hex_cell.ell = Line(circle=(hex_cell.x, hex_cell.y, radius, 0, 360, 6), width=2)
 
                     # Create the solid background of the hexagon, from the bottom left coordinate of the hex.
@@ -60,6 +61,8 @@ class HexMapCell(Label):
     def __init__(self, row=0, col=0, **kwargs):
         super(HexMapCell, self).__init__(**kwargs)
         self.coords = MapCoords(row, col)
+        self.selected = False
+        self.visible_on_map = False
 
     def coordinate_text(self):
         return '({}, {})'.format(self.coords.row, self.coords.col)
@@ -80,12 +83,32 @@ class HexMapCell(Label):
         # Resize the outline of the cell.
         self.ell.circle = (self.x, self.y, radius, 0, 360, 6)
 
-        # Resize the actual cell.
+        # Resize the actual cell.f
         self.solid.pos = (solid_x, solid_y)
         self.solid.size = solid_size
 
         self.coord_label.center_x = self.x
         self.coord_label.center_y = self.y
+
+    def on_touch_down(self, touch):
+        if super(HexMapCell, self).on_touch_down(touch):
+            return True
+
+        if not self.collide_point(touch.x, touch.y):
+            return False
+
+        if not self.visible_on_map:
+            return True
+
+        self.selected = not self.selected
+        with self.canvas.after:
+            if self.selected:
+                Color(*kivy.utils.get_color_from_hex('#00FF00'))
+            else:
+                Color(*kivy.utils.get_color_from_hex('#A1A5AA'))
+            radius = 2 * self.height
+            self.ell = Line(circle=(self.x, self.y, radius, 0, 360, 6), width=2)
+        return True
 
 
 class StrategyGameApp(app.App):
