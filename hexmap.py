@@ -2,6 +2,8 @@ import collections
 
 from math import ceil
 from kivy.uix.label import Label
+from kivy.graphics import Color, Ellipse, Line
+import kivy.utils
 
 MapCoords = collections.namedtuple('MapCoords', ['row', 'col'])
 
