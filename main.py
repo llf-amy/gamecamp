@@ -28,7 +28,6 @@ class StrategyGame(FloatLayout):
 
             # Add overlay conditionally.
             if (row % 6 == 1 and col % 2 == 1) or (row % 6 == 4 and col % 2 == 0) and (col > 0):
-
                 hex_cell.visible_on_map = True
 
                 # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
@@ -102,12 +101,14 @@ class HexMapCell(Label):
 
         self.selected = not self.selected
         with self.canvas.after:
-            if self.selected:
+            if self.selected and touch.button == 'left':
                 Color(*kivy.utils.get_color_from_hex('#00FF00'))
+            elif self.selected and touch.button == 'right':
+                Color(*kivy.utils.get_color_from_hex('#FF0000'))
             else:
                 Color(*kivy.utils.get_color_from_hex('#A1A5AA'))
             radius = 2 * self.height
-            self.ell = Line(circle=(self.x, self.y, radius, 0, 360, 6), width=2)
+            self.ell = Line(circle=(self.x, self.y, radius, 0, 360, 6), width=4)
         return True
 
 
