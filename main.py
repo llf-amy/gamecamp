@@ -83,6 +83,10 @@ class HexMapCell(Label):
         '''return even-r coordinates of the hexagon.'''
         return(self.cube_to_even_r(*self.cube_coords))
 
+    @even_r_coords.setter
+    def even_r_coords(self, value):
+        self.cube_coords = self.even_r_to_cube(*value)
+
     def coordinate_text(self):
         return '({}, {})'.format(self.coords.row, self.coords.col)
 
@@ -90,8 +94,7 @@ class HexMapCell(Label):
         return '{}'.format(self.even_r_coords)
 
     def cube_coordinate_text(self):
-        x, y, z = self.cube_coords
-        return '{}\n{}\n{}'.format(x, y, z)
+        return '{}\n{}\n{}'.format(*self.cube_coords)
 
     def map_display_text(self):
         return "{}\n{}".format(self.even_r_coordinate_text(), self.cube_coordinate_text())
