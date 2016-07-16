@@ -31,16 +31,6 @@
                 size_hint: 1, .33
                 background_color: .75, .71, .99, 1
 
-<Hex@Label>:
-    pos_hint: {'center_x':.5, 'center_y':.5}
-    canvas.after:
-        Color:
-            rgba: 1,1,1,1
-        Ellipse:
-            segments: 6
-            pos: self.pos
-            size: min(self.width, self.height), min(self.width, self.height)
-
 <HexMapCell>:
     size_hint: 1, None
     height: self.width / math.sqrt(3)
