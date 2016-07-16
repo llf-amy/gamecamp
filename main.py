@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, Ellipse, Line
 import kivy.utils
+from math import ceil
 
 MapCoords = collections.namedtuple('MapCoords', ['row', 'col'])
 
@@ -60,15 +61,40 @@ class HexMapCell(Label):
     def __init__(self, row=0, col=0, **kwargs):
         super(HexMapCell, self).__init__(**kwargs)
         self.coords = MapCoords(row, col)
+        ## set the cube coordinates of the hexagon
+        ## as [x, y, z]
+        self.cube_coords = self.even_r_to_cube(self.coords.row / 3, self.coords.col / 2)
+
+
+    def even_r_to_cube(self, row, col):
+        '''compute cube coordinates from even-r hex coordinates'''
+        x = int(col - ceil(float(row)/2))
+        z = row
+        y = - x - z
+        return([x, y, z])
+
+    def cube_to_even_r(self, x, y, z):
+        row = int(x + ceil(z / 2))
+        col = z
+        return ([row, col])
+
+    @property
+    def even_r_coords(self):
+        '''return even-r coordinates of the hexagon.'''
+        return(self.cube_to_even_r(*self.cube_coords))
 
     def coordinate_text(self):
         return '({}, {})'.format(self.coords.row, self.coords.col)
 
-    def map_coordinate_text(self):
-        return '[{}, {}]'.format(self.coords.row / 3, self.coords.col / 2)
+    def even_r_coordinate_text(self):
+        return '{}'.format(self.even_r_coords)
+
+    def cube_coordinate_text(self):
+        x, y, z = self.cube_coords
+        return '{}\n{}\n{}'.format(x, y, z)
 
     def map_display_text(self):
-        return "{}\n{}".format(self.coordinate_text(), self.map_coordinate_text())
+        return "{}\n{}".format(self.even_r_coordinate_text(), self.cube_coordinate_text())
 
     def update_pos(self, instance, value):
         # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
