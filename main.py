@@ -1,7 +1,7 @@
 import collections
 
 from kivy import app, properties
-from kivy.uix import label
+from kivy.uix.label import Label
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, Ellipse, Line
 import kivy.utils
@@ -23,7 +23,7 @@ class StrategyGame(FloatLayout):
             col = region % self.map_cols
 
             # Add hex cells to make up the map.
-            hex_cell = HexMapCell()
+            hex_cell = HexMapCell(row, col)
             self.main_map.add_widget(hex_cell)
 
             # Add overlay conditionally.
@@ -46,14 +46,22 @@ class StrategyGame(FloatLayout):
                     Color(*kivy.utils.get_random_color(alpha=.5))
                     hex_cell.solid = Ellipse(pos=(solid_x, solid_y), size=solid_size, segments=6)
 
+                    Color(1, 1, 1, 1)
+                    hex_cell.coord_label = Label(
+                        text=hex_cell.coordinate_text(), center_x=hex_cell.x, center_y=hex_cell.y)
+
+
                 # Bind the cell code so as to update its position and size when the parent widget resizes.
                 hex_cell.bind(pos=hex_cell.update_pos, size=hex_cell.update_pos)
 
 
-class HexMapCell(label.Label):
+class HexMapCell(Label):
     def __init__(self, row=0, col=0, **kwargs):
         super(HexMapCell, self).__init__(**kwargs)
         self.coords = MapCoords(row, col)
+
+    def coordinate_text(self):
+        return '({}, {})'.format(self.coords.row, self.coords.col)
 
     def update_pos(self, instance, value):
         # Determine the location of the solid hexagon cell.  Needs to be offset from the centre of the hex.
@@ -68,6 +76,9 @@ class HexMapCell(label.Label):
         # Resize the actual cell.
         self.solid.pos = (solid_x, solid_y)
         self.solid.size = solid_size
+
+        self.coord_label.center_x = self.x
+        self.coord_label.center_y = self.y
 
 
 class StrategyGameApp(app.App):
